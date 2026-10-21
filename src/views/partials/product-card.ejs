@@ -1,0 +1,43 @@
+<%
+  const img = (p.images || []).find((i) => i.role === 'front') || (p.images || [])[0];
+  const lists = p.lists || [];
+  const spec = (k) => (p.specs || []).find((s) => s.key === k)?.value;
+  const meta = [spec('country'), spec('year'), spec('condition') && `Kondisyon ${spec('condition')}`].filter(Boolean);
+  const eager = typeof eagerImage !== 'undefined' && eagerImage;
+%>
+<article class="product-card" data-handle="<%= p.handle %>">
+  <a class="card-media" href="<%= p.url %>" tabindex="-1" aria-hidden="true">
+    <img src="<%= imageSrc(img) %>" alt="" width="<%= img ? img.width : 750 %>" height="<%= img ? img.height : 750 %>" <%- eager ? 'fetchpriority="high"' : 'loading="lazy"' %> decoding="async">
+    <% if (lists.includes('cok-satanlar') || lists.includes('yeni-urunler') || !p.availableForSale) { %>
+    <span class="card-badges">
+      <% if (!p.availableForSale) { %><span class="tag tag-muted">Tükendi</span><% } %>
+      <% if (lists.includes('cok-satanlar')) { %><span class="tag">Çok satan</span><% } %>
+      <% if (lists.includes('yeni-urunler')) { %><span class="tag tag-outline">Yeni</span><% } %>
+    </span>
+    <% } %>
+  </a>
+  <div class="card-body">
+    <% if (p.sku) { %><p class="card-sku">Kod: <%= p.sku %></p><% } %>
+    <h3 class="card-title"><a href="<%= p.url %>"><%= p.title %></a></h3>
+    <% if (meta.length) { %><p class="card-meta"><%= meta.join(' · ') %></p><% } %>
+    <div class="card-foot">
+      <p class="price">
+        <% if (p.compareAtPrice) { %><s class="price-old"><span class="visually-hidden">Önceki fiyat:</span><%= fmt.moneyObj(p.compareAtPrice) %></s><% } %>
+        <span class="price-now"><%= p.price ? fmt.moneyObj(p.price) : 'Fiyat yok' %></span>
+      </p>
+      <div class="card-actions">
+        <button type="button" class="icon-btn icon-btn-sm" data-toggle-list="favorites" data-handle="<%= p.handle %>" aria-pressed="false" aria-label="<%= p.title %> favorilere ekle">
+          <svg class="icon" aria-hidden="true"><use href="/static/img/icons.svg#heart"></use></svg>
+        </button>
+        <% if (p.availableForSale && p.variantId) { %>
+        <form action="/sepet/ekle" method="post" data-cart-form>
+          <input type="hidden" name="merchandiseId" value="<%= p.variantId %>">
+          <input type="hidden" name="quantity" value="1">
+          <input type="hidden" name="returnTo" value="<%= p.url %>">
+          <button class="btn btn-buy btn-sm" type="submit" aria-label="<%= p.title %> sepete ekle">Sepete ekle</button>
+        </form>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</article>

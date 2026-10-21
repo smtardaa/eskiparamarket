@@ -1,0 +1,150 @@
+<%- include('../partials/layout-start') %>
+<%
+  const p = product;
+  const images = p.images.length ? p.images : [null];
+  const roleLabel = (img, i) => img && img.role === 'front' ? 'Ön yüz' : img && img.role === 'back' ? 'Arka yüz' : `Görsel ${i + 1}`;
+  const statusText = {
+    eklendi: ['success', 'Ürün sepetinize eklendi.'],
+    tukendi: ['error', 'Bu ürün tükendi; sepete eklenemedi.'],
+    stok: ['error', 'İstenen miktar stok sınırını aşıyor.'],
+    hata: ['error', 'İşlem tamamlanamadı. Lütfen tekrar deneyin.'],
+  }[status];
+  const titleSpecs = p.specs.filter((s) => s.source === 'title');
+%>
+<div class="container-xl page-pad">
+  <%- include('../partials/breadcrumb') %>
+
+  <% if (statusText) { %>
+  <div class="notice notice-<%= statusText[0] %>" role="<%= statusText[0] === 'error' ? 'alert' : 'status' %>">
+    <%= statusText[1] %> <% if (status === 'eklendi') { %><a href="/sepet">Sepete git</a><% } %>
+  </div>
+  <% } %>
+
+  <article class="product-layout">
+    <section class="gallery" aria-label="Ürün görselleri" data-gallery>
+      <div class="gallery-stage">
+        <% images.forEach((img, i) => { %>
+        <figure class="gallery-slide" id="slide-<%= i %>" <%= i ? 'hidden' : '' %> data-slide="<%= i %>">
+          <button type="button" class="zoom-trigger" data-zoom-src="<%= imageSrc(img, 'original') %>" aria-label="<%= roleLabel(img, i) %> görselini büyüt">
+            <img src="<%= imageSrc(img) %>" alt="<%= img ? img.alt : p.title %>" width="<%= img ? img.width : 750 %>" height="<%= img ? img.height : 750 %>" <%- i === 0 ? 'fetchpriority="high"' : 'loading="lazy"' %> decoding="async">
+          </button>
+          <figcaption><%= roleLabel(img, i) %></figcaption>
+        </figure>
+        <% }) %>
+      </div>
+      <% if (images.length > 1) { %>
+      <div class="gallery-thumbs" role="tablist" aria-label="Görsel seçimi">
+        <% images.forEach((img, i) => { %>
+        <button type="button" class="thumb" role="tab" aria-selected="<%= i === 0 %>" aria-controls="slide-<%= i %>" data-thumb="<%= i %>">
+          <img src="<%= imageSrc(img) %>" alt="" width="96" height="96" loading="lazy" decoding="async">
+          <span><%= roleLabel(img, i) %></span>
+        </button>
+        <% }) %>
+      </div>
+      <% } %>
+      <p class="gallery-hint">Büyütmek için görsele tıklayın. Fotoğraflar kırpılmadan gösterilir.</p>
+    </section>
+
+    <section class="buybox" aria-labelledby="product-title">
+      <% if (p.primaryCategory) { %><a class="buybox-cat" href="<%= p.primaryCategory.url %>"><%= p.primaryCategory.name %></a><% } %>
+      <h1 class="product-title" id="product-title"><%= p.title %></h1>
+      <dl class="buybox-meta">
+        <% if (p.sku) { %><div><dt>Ürün kodu</dt><dd><%= p.sku %></dd></div><% } %>
+        <div>
+          <dt>Stok</dt>
+          <dd>
+            <% if (p.availableForSale) { %>
+              <span class="stock stock-in">Satışta</span>
+              <% if (p.quantityAvailable !== null && p.quantityAvailable !== undefined) { %><span class="stock-note">(<%= p.quantityAvailable %> adet)</span><% } else if (site.mode === 'demo') { %><span class="stock-note">Kaynak sitede adet bilgisi yayınlanmıyor</span><% } %>
+            <% } else { %>
+              <span class="stock stock-out">Tükendi</span>
+            <% } %>
+          </dd>
+        </div>
+      </dl>
+
+      <p class="buybox-price">
+        <% if (p.compareAtPrice) { %><s class="price-old"><span class="visually-hidden">Önceki fiyat:</span><%= fmt.moneyObj(p.compareAtPrice) %></s><% } %>
+        <span class="price-now"><%= p.price ? fmt.moneyObj(p.price) : 'Fiyat bilgisi yok' %></span>
+      </p>
+      <p class="price-note">Kargo ve vergiler ödeme adımında kesinleşir.</p>
+
+      <% if (p.availableForSale && p.variantId) { %>
+      <form class="buy-form" action="/sepet/ekle" method="post" data-cart-form>
+        <% if (p.variants && p.variants.length > 1) { %>
+        <label class="form-label" for="variant">Seçenek</label>
+        <select class="form-select mb-3" id="variant" name="merchandiseId">
+          <% p.variants.forEach((v) => { %><option value="<%= v.id %>" <%= v.availableForSale ? '' : 'disabled' %> <%= v.id === p.variantId ? 'selected' : '' %>><%= v.title %> – <%= fmt.moneyObj(v.price) %><%= v.availableForSale ? '' : ' (tükendi)' %></option><% }) %>
+        </select>
+        <% } else { %>
+        <input type="hidden" name="merchandiseId" value="<%= p.variantId %>">
+        <% } %>
+        <input type="hidden" name="returnTo" value="<%= p.url %>">
+        <div class="buy-row">
+          <div class="qty" data-qty>
+            <label class="visually-hidden" for="qty">Adet</label>
+            <button type="button" class="qty-btn" data-step="-1" aria-label="Adedi azalt">−</button>
+            <input id="qty" name="quantity" type="number" inputmode="numeric" min="<%= p.minQty %>" max="<%= p.maxQty %>" value="<%= p.minQty %>" required>
+            <button type="button" class="qty-btn" data-step="1" aria-label="Adedi artır">+</button>
+          </div>
+          <button class="btn btn-buy btn-lg flex-grow-1" type="submit">Sepete ekle</button>
+        </div>
+        <p class="qty-help" id="qty-help">En fazla <%= p.maxQty %> adet<%= site.mode === 'demo' && p.quantityAvailable === null ? ' (demo sınırı)' : '' %>.</p>
+      </form>
+      <% } else { %>
+      <div class="notice notice-muted">Bu ürün şu anda satışta değil.</div>
+      <% } %>
+
+      <div class="buybox-secondary">
+        <button type="button" class="btn btn-ghost" data-toggle-list="favorites" data-handle="<%= p.handle %>" aria-pressed="false">
+          <svg class="icon icon-sm" aria-hidden="true"><use href="/static/img/icons.svg#heart"></use></svg> <span data-label-off="Favorilere ekle" data-label-on="Favorilerde">Favorilere ekle</span>
+        </button>
+        <button type="button" class="btn btn-ghost" data-toggle-list="compare" data-handle="<%= p.handle %>" aria-pressed="false">
+          <svg class="icon icon-sm" aria-hidden="true"><use href="/static/img/icons.svg#compare"></use></svg> <span data-label-off="Karşılaştır" data-label-on="Karşılaştırmada">Karşılaştır</span>
+        </button>
+      </div>
+
+      <ul class="buybox-assure">
+        <% site.business.promises.slice(0, 3).forEach((pr) => { %><li><%= pr.title %></li><% }) %>
+        <li><a href="/sayfa/iptal-ve-iade-kosullari">İptal ve iade koşulları</a></li>
+      </ul>
+    </section>
+  </article>
+
+  <div class="product-details">
+    <section class="detail-block" aria-labelledby="spec-title">
+      <h2 class="detail-title" id="spec-title">Teknik özellikler</h2>
+      <% if (p.specs.length || p.sku) { %>
+      <table class="spec-table">
+        <tbody>
+          <% if (p.sku) { %><tr><th scope="row">Ürün kodu</th><td><%= p.sku %></td></tr><% } %>
+          <% p.specs.forEach((s) => { %><tr><th scope="row"><%= s.label %></th><td><%= s.value %></td></tr><% }) %>
+        </tbody>
+      </table>
+      <% if (titleSpecs.length) { %><p class="spec-note">Ülke ve dönem kategori bilgisinden; yıl, kondisyon, katalog numarası ve nominal değer ürün adından otomatik okunmuştur. Satın almadan önce fotoğraflarla birlikte değerlendirin.</p><% } %>
+      <% } else { %>
+      <p class="text-secondary">Bu ürün için yapılandırılmış özellik bilgisi bulunmuyor.</p>
+      <% } %>
+    </section>
+    <section class="detail-block" aria-labelledby="desc-title">
+      <h2 class="detail-title" id="desc-title">Açıklama</h2>
+      <% if (p.descriptionHtml) { %><div class="prose"><%- p.descriptionHtml %></div><% } else { %><p class="text-secondary">Açıklama girilmemiş.</p><% } %>
+    </section>
+  </div>
+
+  <% if (related.length) { %>
+  <section class="section-tight" aria-labelledby="related-title">
+    <div class="section-head"><h2 class="section-title" id="related-title">Aynı kategoriden</h2><% if (p.primaryCategory) { %><a class="section-link" href="<%= p.primaryCategory.url %>">Tümünü gör</a><% } %></div>
+    <div class="product-grid product-grid-4">
+      <% related.slice(0, 4).forEach((r) => { %><%- include('../partials/product-card', { p: r }) %><% }) %>
+    </div>
+  </section>
+  <% } %>
+</div>
+
+<dialog class="zoom-dialog" id="zoom-dialog" aria-label="Büyütülmüş görsel">
+  <form method="dialog"><button class="zoom-close" aria-label="Kapat">×</button></form>
+  <div class="zoom-viewport" data-zoom-viewport><img alt="" id="zoom-img"></div>
+  <p class="zoom-help">Yakınlaştırmak için görsele tıklayın; yakınlaştırılmışken fareyle veya parmağınızla gezinebilirsiniz.</p>
+</dialog>
+<%- include('../partials/layout-end') %>

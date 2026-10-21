@@ -1,0 +1,14 @@
+<%- include('../partials/layout-start') %>
+<div class="container-xl page-pad">
+  <%- include('../partials/breadcrumb') %>
+  <h1 class="page-title">Ürün karşılaştırma</h1>
+  <p class="text-secondary">En fazla 4 ürünü fiyat, stok ve numismatik özellikleriyle yan yana görebilirsiniz. Liste bu tarayıcıda saklanır.</p>
+  <div data-list-view="compare" data-endpoint="/parcalar/karsilastir" aria-live="polite">
+    <noscript><div class="notice notice-muted">Karşılaştırma için JavaScript gereklidir.</div></noscript>
+    <p class="loading-text">Yükleniyor…</p>
+  </div>
+  <template id="compare-empty">
+    <div class="empty-state"><h2 class="h5">Karşılaştırma listeniz boş</h2><p>Ürün sayfasındaki “Karşılaştır” düğmesiyle ürün ekleyin.</p><a class="btn btn-primary-navy" href="/">Ürünlere göz at</a></div>
+  </template>
+</div>
+<%- include('../partials/layout-end') %>

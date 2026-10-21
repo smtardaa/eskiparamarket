@@ -1,0 +1,23 @@
+<% const pg = result.pagination; %>
+<% if (pg.type === 'page' && pg.pages > 1) {
+  const pages = [];
+  for (let i = 1; i <= pg.pages; i++) if (i === 1 || i === pg.pages || Math.abs(i - pg.page) <= 2) pages.push(i);
+%>
+<nav class="pager" aria-label="Sayfalar">
+  <ul>
+    <li><% if (pg.page > 1) { %><a href="<%= url({ page: pg.page - 1 > 1 ? pg.page - 1 : null }) %>" rel="prev">‹ Önceki</a><% } else { %><span class="is-disabled" aria-disabled="true">‹ Önceki</span><% } %></li>
+    <% pages.forEach((n, i) => { %>
+      <% if (i && n - pages[i - 1] > 1) { %><li><span class="gap" aria-hidden="true">…</span></li><% } %>
+      <li><% if (n === pg.page) { %><span class="is-current" aria-current="page"><%= n %></span><% } else { %><a href="<%= url({ page: n > 1 ? n : null }) %>" aria-label="Sayfa <%= n %>"><%= n %></a><% } %></li>
+    <% }) %>
+    <li><% if (pg.page < pg.pages) { %><a href="<%= url({ page: pg.page + 1 }) %>" rel="next">Sonraki ›</a><% } else { %><span class="is-disabled" aria-disabled="true">Sonraki ›</span><% } %></li>
+  </ul>
+</nav>
+<% } else if (pg.type === 'cursor' && (pg.hasNextPage || pg.hasPreviousPage)) { %>
+<nav class="pager" aria-label="Sayfalar">
+  <ul>
+    <li><% if (pg.hasPreviousPage) { %><a href="<%= url({ before: pg.startCursor, after: null }) %>" rel="prev">‹ Önceki</a><% } else { %><span class="is-disabled" aria-disabled="true">‹ Önceki</span><% } %></li>
+    <li><% if (pg.hasNextPage) { %><a href="<%= url({ after: pg.endCursor, before: null }) %>" rel="next">Sonraki ›</a><% } else { %><span class="is-disabled" aria-disabled="true">Sonraki ›</span><% } %></li>
+  </ul>
+</nav>
+<% } %>

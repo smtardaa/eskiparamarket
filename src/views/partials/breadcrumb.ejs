@@ -1,0 +1,7 @@
+<nav class="crumbs" aria-label="Sayfa konumu">
+  <ol>
+    <% breadcrumb.forEach((b, i) => { %>
+    <li><% if (i < breadcrumb.length - 1) { %><a href="<%= b.url %>"><%= b.name %></a><% } else { %><span aria-current="page"><%= b.name %></span><% } %></li>
+    <% }) %>
+  </ol>
+</nav>

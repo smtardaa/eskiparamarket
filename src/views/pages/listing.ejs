@@ -1,0 +1,75 @@
+<%- include('../partials/layout-start') %>
+<%
+  const chips = [];
+  const labelOf = (param, value) => {
+    for (const f of result.facets || []) if ((f.param || f.key) === param) { const v = f.values?.find((x) => x.value === value); if (v) return `${f.label}: ${v.label || v.value}`; }
+    return value;
+  };
+  for (const k of ['country', 'emission', 'period', 'condition', 'certificate']) q.filters[k].forEach((v) => chips.push({ label: labelOf(k, v), href: url({ [k]: ['__remove__', v] }) }));
+  q.filters.shopify.forEach((v) => chips.push({ label: labelOf('filter', v), href: url({ filter: ['__remove__', v] }) }));
+  if (q.filters.priceFrom || q.filters.priceTo) chips.push({ label: `Fiyat: ${q.filters.priceFrom || 0} – ${q.filters.priceTo || '∞'} TL`, href: url({ priceFrom: null, priceTo: null }) });
+  if (q.filters.yearFrom || q.filters.yearTo) chips.push({ label: `Yıl: ${q.filters.yearFrom || '…'} – ${q.filters.yearTo || '…'}`, href: url({ yearFrom: null, yearTo: null }) });
+  if (q.filters.inStock) chips.push({ label: 'Yalnızca satıştakiler', href: url({ inStock: null }) });
+  const hasPanel = (result.facets || []).length || (category && category.children && category.children.length);
+%>
+<div class="container-xl page-pad">
+  <%- include('../partials/breadcrumb') %>
+  <header class="listing-head">
+    <div>
+      <h1 class="page-title"><%= heading %></h1>
+      <p class="listing-count" role="status">
+        <% if (result.total !== null && result.total !== undefined) { %><%= result.total.toLocaleString('tr-TR') %> ürün<% } else { %><%= result.items.length %> ürün gösteriliyor<% } %>
+      </p>
+    </div>
+    <% if (intro && !paged) { %><div class="listing-intro prose"><%- intro %></div><% } %>
+  </header>
+
+  <div class="listing-layout <%= hasPanel ? '' : 'no-panel' %>">
+    <%- include('../partials/filters') %>
+
+    <section class="listing-main" aria-label="Ürünler">
+      <div class="toolbar">
+        <% if (hasPanel) { %>
+        <button class="btn btn-outline-navy d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#filters" aria-controls="filters">
+          <svg class="icon icon-sm" aria-hidden="true"><use href="/static/img/icons.svg#filter"></use></svg> Filtrele<% if (filtered) { %> <span class="badge-inline"><%= chips.length %></span><% } %>
+        </button>
+        <% } %>
+        <form class="sort-form" method="get" action="" data-autosubmit>
+          <% for (const [k, v] of new URLSearchParams(url({ sort: null }).split('?')[1] || '')) { %><input type="hidden" name="<%= k %>" value="<%= v %>"><% } %>
+          <label for="sort" class="sort-label">Sırala</label>
+          <select id="sort" name="sort" class="form-select form-select-sm">
+            <% for (const [k, label] of Object.entries(site.sorts)) { %><option value="<%= k %>" <%= q.sort === k ? 'selected' : '' %>><%= label %></option><% } %>
+          </select>
+          <noscript><button class="btn btn-sm btn-outline-navy" type="submit">Uygula</button></noscript>
+        </form>
+      </div>
+
+      <% if (chips.length) { %>
+      <ul class="chips" aria-label="Etkin filtreler">
+        <% chips.forEach((c) => { %><li><a class="chip" href="<%= c.href %>"><%= c.label %> <span aria-hidden="true">×</span><span class="visually-hidden"> filtresini kaldır</span></a></li><% }) %>
+      </ul>
+      <% } %>
+
+      <% if (result.items.length) { %>
+      <div class="product-grid">
+        <% result.items.forEach((p, i) => { %><%- include('../partials/product-card', { p, eagerImage: i < 4 }) %><% }) %>
+      </div>
+      <%- include('../partials/pagination') %>
+      <% } else { %>
+      <div class="empty-state">
+        <h2 class="h5">Sonuç bulunamadı</h2>
+        <% if (filtered) { %>
+          <p>Seçtiğiniz filtrelere uyan ürün yok.</p>
+          <a class="btn btn-outline-navy" href="<%= url({}, { reset: true }) %>">Filtreleri temizle</a>
+        <% } else if (query) { %>
+          <p>“<%= query %>” ile eşleşen ürün bulunamadı. Daha kısa bir ifade, ülke adı veya ürün kodu deneyin.</p>
+        <% } else { %>
+          <p>Bu kategoride şu anda ürün bulunmuyor.</p>
+          <a class="btn btn-outline-navy" href="/">Ana sayfaya dön</a>
+        <% } %>
+      </div>
+      <% } %>
+    </section>
+  </div>
+</div>
+<%- include('../partials/layout-end') %>

@@ -1,0 +1,55 @@
+/*
+ * Tasarım tokenları. Renkler yalnızca burada tanımlanır; bileşenler token kullanır.
+ * Kontrast (WCAG AA, normal metin ≥ 4.5:1):
+ *   ink #111315 / bg #F5F6F8 ≈ 17.5:1 · muted #626B76 / #FFF ≈ 5.3:1 · muted / bg ≈ 4.9:1
+ *   white / navy #14263D ≈ 15:1 · white / green #176B50 ≈ 6.6:1 · green / #FFF ≈ 6.6:1
+ */
+:root {
+  --c-ink: #111315;
+  --c-navy: #14263d;
+  --c-navy-700: #1d3555;
+  --c-navy-050: #eef2f7;
+  --c-green: #176b50;
+  --c-green-700: #115340;
+  --c-green-050: #e8f3ee;
+  --c-bg: #f5f6f8;
+  --c-surface: #ffffff;
+  --c-muted: #626b76;
+  --c-border: #e2e6eb;
+  --c-border-strong: #c9d0d8;
+  --c-danger: #a32020;
+  --c-danger-050: #fbeeee;
+  --c-warn: #7a5300;
+  --c-warn-050: #fdf6e3;
+
+  --font-sans: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --font-serif: 'Source Serif 4 Variable', Georgia, 'Times New Roman', serif;
+
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.875rem;
+  --fs-md: 1rem;
+  --fs-lg: 1.125rem;
+  --fs-xl: clamp(1.375rem, 1.1rem + 1vw, 1.75rem);
+  --fs-2xl: clamp(1.75rem, 1.3rem + 2vw, 2.625rem);
+
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.5rem;
+  --sp-6: 2rem;
+  --sp-7: 3rem;
+  --sp-8: 4.5rem;
+
+  --radius-sm: 4px;
+  --radius: 6px;
+  --radius-lg: 10px;
+
+  --shadow-sm: 0 1px 2px rgba(17, 19, 21, 0.06);
+  --shadow: 0 2px 8px rgba(17, 19, 21, 0.06), 0 1px 2px rgba(17, 19, 21, 0.05);
+  --shadow-lg: 0 12px 32px rgba(17, 19, 21, 0.12);
+
+  --focus: 0 0 0 3px #ffffff, 0 0 0 5px var(--c-green);
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --header-h: 72px;
+}

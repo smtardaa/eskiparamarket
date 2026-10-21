@@ -1,0 +1,78 @@
+<%- include('../partials/layout-start') %>
+<%
+  const msg = {
+    eklendi: ['success', 'Ürün sepete eklendi.'],
+    guncellendi: ['success', 'Sepet güncellendi.'],
+    silindi: ['success', 'Ürün sepetten çıkarıldı.'],
+    stok: ['error', 'İstenen miktar stok sınırını aşıyor; miktar değiştirilmedi.'],
+    tukendi: ['error', 'Ürün tükendiği için işlem yapılamadı.'],
+    'satista-degil': ['error', 'Sepetinizde satışta olmayan ürün var. Ödemeye geçmeden önce çıkarın.'],
+    hata: ['error', 'İşlem tamamlanamadı. Lütfen tekrar deneyin.'],
+  }[status];
+  const lines = cart ? cart.lines : [];
+%>
+<div class="container-xl page-pad">
+  <h1 class="page-title">Sepetim</h1>
+  <div id="cart-messages">
+    <% if (msg) { %><div class="notice notice-<%= msg[0] %>" role="<%= msg[0] === 'error' ? 'alert' : 'status' %>"><%= msg[1] %></div><% } %>
+    <% if (typeof cartUnavailable !== 'undefined' && cartUnavailable) { %><div class="notice notice-error" role="alert">Sepetinize şu anda ulaşılamıyor. Lütfen birkaç dakika sonra tekrar deneyin.</div><% } %>
+    <% (cart?.warnings || []).forEach((w) => { %><div class="notice notice-warn" role="status"><%= w %></div><% }) %>
+  </div>
+
+  <% if (!lines.length) { %>
+  <div class="empty-state">
+    <h2 class="h5">Sepetiniz boş</h2>
+    <p>Koleksiyonunuza ekleyecek bir şeyler bulmak için kategorilere göz atın.</p>
+    <a class="btn btn-primary-navy" href="/">Alışverişe başla</a>
+  </div>
+  <% } else { %>
+  <div class="cart-layout">
+    <section aria-label="Sepetteki ürünler">
+      <ul class="cart-lines">
+        <% lines.forEach((l) => { %>
+        <li class="cart-line <%= l.availableForSale ? '' : 'is-unavailable' %>">
+          <a class="cart-thumb" href="<%= l.url %>" tabindex="-1" aria-hidden="true"><img src="<%= imageSrc(l.image) %>" alt="" width="96" height="96" loading="lazy"></a>
+          <div class="cart-info">
+            <a class="cart-title" href="<%= l.url %>"><%= l.title %></a>
+            <% if (l.sku) { %><span class="cart-sku">Kod: <%= l.sku %></span><% } %>
+            <span class="cart-unit"><%= fmt.moneyObj(l.unitPrice) %> / adet</span>
+            <% if (!l.availableForSale) { %><span class="stock stock-out">Satışta değil</span><% } %>
+          </div>
+          <form class="cart-qty" action="/sepet/guncelle" method="post" data-cart-update>
+            <input type="hidden" name="lineId" value="<%= l.id %>">
+            <label class="visually-hidden" for="q-<%= l.id %>"><%= l.title %> adedi</label>
+            <input class="form-control form-control-sm" id="q-<%= l.id %>" name="quantity" type="number" inputmode="numeric" min="0" max="<%= Math.max(l.maxQty, l.quantity) %>" value="<%= l.quantity %>">
+            <button class="btn btn-sm btn-outline-navy" type="submit">Güncelle</button>
+          </form>
+          <p class="cart-total"><%= fmt.moneyObj(l.lineTotal) %></p>
+          <form action="/sepet/sil" method="post" data-cart-remove>
+            <input type="hidden" name="lineId" value="<%= l.id %>">
+            <button class="icon-btn icon-btn-sm" type="submit" aria-label="<%= l.title %> ürününü sepetten çıkar"><svg class="icon" aria-hidden="true"><use href="/static/img/icons.svg#trash"></use></svg></button>
+          </form>
+        </li>
+        <% }) %>
+      </ul>
+    </section>
+
+    <aside class="cart-summary" aria-labelledby="summary-title">
+      <h2 class="h5" id="summary-title">Sipariş özeti</h2>
+      <dl>
+        <div><dt>Ara toplam (<%= cart.totalQuantity %> ürün)</dt><dd><%= fmt.moneyObj(cart.subtotal) %></dd></div>
+        <div><dt>Kargo</dt><dd>Ödeme adımında hesaplanır</dd></div>
+        <div><dt>Vergiler</dt><dd>Ödeme adımında kesinleşir</dd></div>
+        <% if (cart.total) { %><div class="summary-total"><dt>Tahmini toplam</dt><dd><%= fmt.moneyObj(cart.total) %></dd></div><% } %>
+      </dl>
+      <form action="/odeme" method="post">
+        <button class="btn btn-buy btn-lg w-100" type="submit" <%= cart.checkoutReady ? '' : 'disabled' %>>Ödemeye geç</button>
+      </form>
+      <% if (site.mode === 'demo') { %>
+      <p class="summary-note">Demo modu: Ödeme adımı gerçek bir ödeme sayfası açmaz, sipariş oluşturulmaz. Sepet sunucu belleğinde tutulur ve yeniden başlatmada silinir.</p>
+      <% } else { %>
+      <p class="summary-note">Ödeme Shopify’ın güvenli ödeme sayfasında tamamlanır. Kart bilgileriniz bu sitede alınmaz.</p>
+      <% } %>
+      <a class="btn btn-link w-100" href="/">Alışverişe devam et</a>
+    </aside>
+  </div>
+  <% } %>
+</div>
+<%- include('../partials/layout-end') %>

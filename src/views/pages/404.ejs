@@ -1,0 +1,13 @@
+<%- include('../partials/layout-start') %>
+<div class="container-xl page-pad narrow text-center error-page">
+  <p class="error-code">404</p>
+  <h1 class="page-title">Aradığınız sayfa bulunamadı</h1>
+  <p>Sayfa kaldırılmış ya da adresi değişmiş olabilir. Aramayı deneyin veya kategorilere göz atın.</p>
+  <form class="hero-search mx-auto" action="/arama" method="get" role="search">
+    <label class="visually-hidden" for="nf-q">Ürün ara</label>
+    <input id="nf-q" class="form-control" type="search" name="q" placeholder="Ürün, ülke veya ürün kodu" maxlength="100">
+    <button class="btn btn-buy" type="submit">Ara</button>
+  </form>
+  <a class="btn btn-link mt-3" href="/">Ana sayfaya dön</a>
+</div>
+<%- include('../partials/layout-end') %>

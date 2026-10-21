@@ -1,0 +1,19 @@
+<%- include('../partials/layout-start') %>
+<div class="container-xl page-pad narrow">
+  <%- include('../partials/breadcrumb') %>
+  <h1 class="page-title"><%= page.title %></h1>
+  <% if (page.placeholder) { %>
+  <div class="notice notice-warn" role="status">
+    <strong>Tamamlanması gereken içerik.</strong> Kaynak sitede bu sayfa için yalnızca şablon metni bulunuyor; işletme tarafından doldurulmalıdır.
+  </div>
+  <% } else { %>
+  <% if (/ADI\/UNVANI|ŞİRKET/i.test(page.html) && !site.business.legalName) { %>
+  <div class="notice notice-warn" role="note">
+    <strong>Eksik bilgi:</strong> Bu metindeki satıcı unvanı, adres ve iletişim alanları kaynak sitede boş bırakılmış. Yayına almadan önce işletme bilgileriyle tamamlanmalıdır.
+  </div>
+  <% } %>
+  <div class="prose"><%- page.html %></div>
+  <% } %>
+  <p class="source-note">Kaynak: <a href="<%= page.sourceUrl %>" rel="nofollow noopener">eskiparamarket.com</a> (21.10.2026 itibarıyla aktarıldı)</p>
+</div>
+<%- include('../partials/layout-end') %>

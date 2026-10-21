@@ -1,0 +1,16 @@
+<%- include('../partials/layout-start') %>
+<div class="container-xl page-pad narrow">
+  <h1 class="page-title">Ödeme adımı (demo)</h1>
+  <div class="notice notice-warn" role="status">
+    Bu mağaza demo modunda çalışıyor. Ödeme alınmadı ve sipariş oluşturulmadı.
+  </div>
+  <p>Shopify bağlandığında (<code>CATALOG_PROVIDER=shopify</code>) bu düğme sizi sepetin Shopify tarafından üretilen güvenli <strong>checkoutUrl</strong> adresine yönlendirir. Kart bilgileri hiçbir zaman bu sitede toplanmaz.</p>
+  <h2 class="h6 mt-4">Sepet özeti</h2>
+  <ul class="plain-list">
+    <% cart.lines.forEach((l) => { %><li><%= l.quantity %> × <%= l.title %> — <%= fmt.moneyObj(l.lineTotal) %></li><% }) %>
+  </ul>
+  <p><strong>Ara toplam:</strong> <%= fmt.moneyObj(cart.subtotal) %> <span class="text-secondary">(kargo ve vergiler hariç)</span></p>
+  <p>Gerçek sipariş için <a href="<%= site.business.whatsapp %>" rel="noopener" target="_blank">WhatsApp</a> veya <a href="tel:<%= site.business.phoneE164 %>"><%= site.business.phone %></a> üzerinden mağazayla iletişime geçebilirsiniz.</p>
+  <a class="btn btn-outline-navy" href="/sepet">Sepete dön</a>
+</div>
+<%- include('../partials/layout-end') %>

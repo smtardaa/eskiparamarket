@@ -1,0 +1,31 @@
+<%- include('../partials/layout-start') %>
+<% const b = site.business; %>
+<div class="container-xl page-pad narrow">
+  <%- include('../partials/breadcrumb') %>
+  <h1 class="page-title">İletişim</h1>
+  <p class="lead-text">Ürünler, sipariş ve kargo hakkındaki sorularınız için bize aşağıdaki kanallardan ulaşabilirsiniz.</p>
+  <div class="contact-grid">
+    <a class="contact-card" href="<%= b.whatsapp %>" rel="noopener" target="_blank">
+      <span class="contact-label">WhatsApp</span>
+      <span class="contact-value"><%= b.phone %></span>
+      <span class="contact-hint"><%= b.hours %></span>
+    </a>
+    <a class="contact-card" href="tel:<%= b.phoneE164 %>">
+      <span class="contact-label">Telefon</span>
+      <span class="contact-value"><%= b.phone %></span>
+    </a>
+    <a class="contact-card" href="mailto:<%= b.email %>">
+      <span class="contact-label">E-posta</span>
+      <span class="contact-value"><%= b.email %></span>
+    </a>
+    <div class="contact-card">
+      <span class="contact-label">Konum</span>
+      <span class="contact-value"><%= b.city %></span>
+      <span class="contact-hint">Açık adres kaynak sitede yayınlanmıyor.</span>
+    </div>
+  </div>
+  <div class="notice notice-muted mt-4" role="note">
+    İletişim formu bu sürümde yer almıyor: kaynak sitedeki formun gönderim altyapısı aktarılmadı. Bir e-posta servisi bağlandığında form eklenebilir.
+  </div>
+</div>
+<%- include('../partials/layout-end') %>

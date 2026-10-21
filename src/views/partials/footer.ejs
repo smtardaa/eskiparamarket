@@ -1,0 +1,46 @@
+<% const b = site.business; const roots = nav.filter((c) => c.kind !== 'collection'); %>
+<section class="promise-strip" aria-label="Hizmet bilgileri">
+  <div class="container-xl">
+    <ul class="promise-list">
+      <% b.promises.forEach((p) => { %>
+      <li><strong><%= p.title %></strong><span><%= p.text %></span></li>
+      <% }) %>
+    </ul>
+  </div>
+</section>
+<footer class="site-footer">
+  <div class="container-xl">
+    <div class="row g-4">
+      <div class="col-12 col-lg-4">
+        <p class="footer-brand"><%= site.name %></p>
+        <p class="footer-text">Türkiye Cumhuriyeti emisyonları, Osmanlı ve yabancı ülke paraları ile koleksiyon malzemeleri. <%= b.founded %> yılından beri koleksiyonerlere hizmet veriyor.</p>
+      </div>
+      <div class="col-6 col-lg-3">
+        <h2 class="footer-title">Kategoriler</h2>
+        <ul class="footer-links">
+          <% roots.forEach((c) => { %><li><a href="<%= c.url %>"><%= c.name %></a></li><% }) %>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-2">
+        <h2 class="footer-title">Kurumsal</h2>
+        <ul class="footer-links">
+          <li><a href="/iletisim">İletişim</a></li>
+          <% site.policies.filter((p) => !p.placeholder).forEach((p) => { %><li><a href="<%= p.url %>"><%= p.title %></a></li><% }) %>
+        </ul>
+      </div>
+      <div class="col-12 col-lg-3">
+        <h2 class="footer-title">İletişim</h2>
+        <ul class="footer-links footer-contact">
+          <li><span class="label">Telefon</span> <a href="tel:<%= b.phoneE164 %>"><%= b.phone %></a></li>
+          <li><span class="label">WhatsApp</span> <a href="<%= b.whatsapp %>" rel="noopener" target="_blank">Mesaj gönderin</a></li>
+          <li><span class="label">E-posta</span> <a href="mailto:<%= b.email %>"><%= b.email %></a></li>
+          <li><span class="label">Konum</span> <%= b.city %></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <%= new Date().getFullYear() %> <%= site.name %></span>
+      <% if (site.mode === 'demo') { %><span>Demo sürüm · Ödeme ve sipariş devre dışı</span><% } %>
+    </div>
+  </div>
+</footer>

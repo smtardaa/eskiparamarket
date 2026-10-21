@@ -1,0 +1,103 @@
+<%- include('../partials/layout-start') %>
+<section class="hero">
+  <div class="container-xl hero-inner">
+    <div class="hero-copy">
+      <p class="eyebrow">Numismatik koleksiyon mağazası</p>
+      <h1 class="hero-title">Kâğıt para, madeni para ve hatıra paralar</h1>
+      <p class="hero-lead">Türkiye Cumhuriyeti emisyonlarından Osmanlı ve dünya paralarına; her ürün ön ve arka yüz fotoğrafı, kondisyon ve katalog bilgisiyle.</p>
+      <form class="hero-search" action="/arama" method="get" role="search">
+        <label class="visually-hidden" for="hero-q">Koleksiyonda ara</label>
+        <input id="hero-q" class="form-control form-control-lg" type="search" name="q" placeholder="Örn. 7. emisyon, Almanya, P-217, TT 147" maxlength="100">
+        <button class="btn btn-buy btn-lg" type="submit">Ara</button>
+      </form>
+      <% if (stats) { %>
+      <dl class="hero-stats">
+        <div><dt>Ürün</dt><dd><%= stats.products.toLocaleString('tr-TR') %></dd></div>
+        <% const foreign = categories.find((c) => c.id === 'yabanci-paralar'); if (foreign) { %><div><dt>Ülke kategorisi</dt><dd><%= foreign.children.length %></dd></div><% } %>
+        <div><dt>Kuruluş</dt><dd><%= site.business.founded %></dd></div>
+      </dl>
+      <% } %>
+    </div>
+    <ul class="hero-quick" aria-label="Öne çıkan kategoriler">
+      <% categories.slice(0, 5).forEach((c) => { %>
+      <li><a href="<%= c.url %>"><span><%= c.name %></span><span class="count"><%= c.productCount %> ürün</span></a></li>
+      <% }) %>
+    </ul>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container-xl">
+    <div class="section-head">
+      <h2 class="section-title">Kategoriler</h2>
+    </div>
+    <ul class="category-grid">
+      <% categories.forEach((c) => { %>
+      <li>
+        <a class="category-card" href="<%= c.url %>">
+          <span class="category-media"><img src="<%= imageSrc(c.image) %>" alt="" width="750" height="750" loading="lazy" decoding="async"></span>
+          <span class="category-body">
+            <span class="category-name"><%= c.name %></span>
+            <span class="category-count"><%= c.productCount %> ürün<% if (c.children.length) { %> · <%= c.children.length %> alt kategori<% } %></span>
+          </span>
+        </a>
+      </li>
+      <% }) %>
+    </ul>
+  </div>
+</section>
+
+<% if (bestsellers && bestsellers.items.length) { %>
+<section class="section section-alt">
+  <div class="container-xl">
+    <div class="section-head">
+      <h2 class="section-title">Çok satanlar</h2>
+      <a class="section-link" href="/kategori/cok-satanlar">Tümünü gör (<%= bestsellers.total || '' %>)</a>
+    </div>
+    <div class="product-grid product-grid-4">
+      <% bestsellers.items.forEach((p) => { %><%- include('../partials/product-card', { p }) %><% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<% if (newest && newest.items.length) { %>
+<section class="section">
+  <div class="container-xl">
+    <div class="section-head">
+      <h2 class="section-title">Yeni eklenenler</h2>
+      <a class="section-link" href="/kategori/yeni-urunler">Tümünü gör (<%= newest.total || '' %>)</a>
+    </div>
+    <div class="product-grid product-grid-4">
+      <% newest.items.forEach((p) => { %><%- include('../partials/product-card', { p }) %><% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<% if (collections.length) { %>
+<section class="section section-alt">
+  <div class="container-xl">
+    <div class="section-head"><h2 class="section-title">Seçkiler</h2></div>
+    <ul class="collection-list">
+      <% collections.forEach((c) => { %>
+      <li><a class="collection-card" href="<%= c.url %>"><img src="<%= imageSrc(c.image) %>" alt="" width="750" height="750" loading="lazy" decoding="async"><span><strong><%= c.name %></strong><span class="count"><%= c.productCount %> ürün</span></span></a></li>
+      <% }) %>
+    </ul>
+  </div>
+</section>
+<% } %>
+
+<section class="section">
+  <div class="container-xl about-band">
+    <div>
+      <h2 class="section-title">Eski Para Market hakkında</h2>
+      <p>Numismatik ve koleksiyon tutkusunu profesyonel ve amatör koleksiyonerlerle buluşturmak amacıyla <%= site.business.founded %> yılında yayına başladı. Sorularınız için WhatsApp hattımızdan bize ulaşabilirsiniz.</p>
+    </div>
+    <div class="about-actions">
+      <a class="btn btn-outline-navy" href="/sayfa/hakkimizda">Hakkımızda</a>
+      <a class="btn btn-primary-navy" href="/iletisim">İletişim</a>
+    </div>
+  </div>
+</section>
+<%- include('../partials/layout-end') %>

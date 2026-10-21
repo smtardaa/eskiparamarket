@@ -1,0 +1,32 @@
+{
+  "name": "eskiparamarket",
+  "version": "0.1.0",
+  "description": "Eski Para Market – headless Shopify uyumlu numismatik e-ticaret vitrini (Express + EJS)",
+  "scripts": {
+    "dev": "node --watch --env-file-if-exists=.env server.js",
+    "start": "node --env-file-if-exists=.env server.js",
+    "test": "node --test test/*.test.js",
+    "catalog:crawl": "node tools/import-reference/crawl.mjs",
+    "catalog:build": "node tools/import-reference/build-catalog.mjs",
+    "images:mirror": "node tools/import-reference/mirror-images.mjs",
+    "shopify:import": "node --env-file-if-exists=.env tools/shopify/import-catalog.mjs",
+    "catalog:report": "node tools/import-reference/report.mjs"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "type": "commonjs",
+  "dependencies": {
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource-variable/source-serif-4": "^5.3.1",
+    "bootstrap": "^5.3.8",
+    "ejs": "^7.0.2",
+    "express": "^4.22.3"
+  },
+  "devDependencies": {
+    "cheerio": "^1.2.0"
+  },
+  "private": true,
+  "engines": {
+    "node": ">=22.9"
+  }
+}

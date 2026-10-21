@@ -1,0 +1,63 @@
+<%
+  const facets = result.facets || [];
+  const hasFacets = facets.length > 0;
+%>
+<% if (hasFacets || (category && category.children && category.children.length)) { %>
+<aside class="offcanvas-lg offcanvas-start filter-panel" tabindex="-1" id="filters" aria-labelledby="filters-title">
+  <div class="offcanvas-header">
+    <h2 class="offcanvas-title h5" id="filters-title">Filtrele</h2>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#filters" aria-label="Filtreleri kapat"></button>
+  </div>
+  <div class="offcanvas-body">
+    <% if (category && category.children && category.children.length) { %>
+    <section class="filter-group">
+      <h3 class="filter-title">Alt kategoriler</h3>
+      <ul class="subcat-list">
+        <% category.children.forEach((ch) => { %><li><a href="<%= ch.url %>"><%= ch.name %><% if (ch.productCount != null) { %> <span class="count"><%= ch.productCount %></span><% } %></a></li><% }) %>
+      </ul>
+    </section>
+    <% } %>
+
+    <% if (hasFacets) { %>
+    <form class="filter-form" method="get" action="<%= url({}, { reset: true }).split('?')[0] %>" data-filter-form>
+      <% if (query) { %><input type="hidden" name="q" value="<%= query %>"><% } %>
+      <% if (q.sort !== 'default') { %><input type="hidden" name="sort" value="<%= q.sort %>"><% } %>
+      <% facets.forEach((f) => { const param = f.param || f.key; %>
+      <fieldset class="filter-group">
+        <legend class="filter-title"><%= f.label %></legend>
+        <% if (f.type === 'list') { const many = f.values.length > 8; %>
+          <% if (f.values.length > 12) { %>
+          <label class="visually-hidden" for="ff-<%= f.key %>"><%= f.label %> içinde ara</label>
+          <input class="form-control form-control-sm mb-2" id="ff-<%= f.key %>" type="search" placeholder="<%= f.label %> ara…" data-facet-search>
+          <% } %>
+          <ul class="check-list <%= many ? 'is-scroll' : '' %>">
+            <% f.values.forEach((v, i) => { const id = `f-${f.key.replace(/[^a-z0-9]/gi, '')}-${i}`; %>
+            <li>
+              <input class="form-check-input" type="checkbox" id="<%= id %>" name="<%= param %>" value="<%= v.value %>" <%= v.selected ? 'checked' : '' %>>
+              <label for="<%= id %>"><%= v.label || v.value %> <span class="count"><%= v.count %></span></label>
+            </li>
+            <% }) %>
+          </ul>
+        <% } else if (f.type === 'range') { const from = f.key === 'price' ? 'priceFrom' : 'yearFrom', to = f.key === 'price' ? 'priceTo' : 'yearTo'; %>
+          <div class="range-row">
+            <div><label class="form-label small" for="r-<%= from %>">En az</label><input class="form-control form-control-sm" type="number" inputmode="numeric" id="r-<%= from %>" name="<%= from %>" min="0" placeholder="<%= f.min %>" value="<%= f.from || '' %>"></div>
+            <span aria-hidden="true">–</span>
+            <div><label class="form-label small" for="r-<%= to %>">En çok</label><input class="form-control form-control-sm" type="number" inputmode="numeric" id="r-<%= to %>" name="<%= to %>" min="0" placeholder="<%= f.max %>" value="<%= f.to || '' %>"></div>
+          </div>
+        <% } else if (f.type === 'toggle') { %>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="f-instock" name="inStock" value="1" <%= f.selected ? 'checked' : '' %>>
+            <label class="form-check-label" for="f-instock">Yalnızca satıştakiler <span class="count"><%= f.count %></span></label>
+          </div>
+        <% } %>
+      </fieldset>
+      <% }) %>
+      <div class="filter-submit">
+        <button class="btn btn-primary-navy w-100" type="submit">Filtreleri uygula</button>
+        <% if (filtered) { %><a class="btn btn-link w-100" href="<%= url({}, { reset: true }) %>">Tüm filtreleri temizle</a><% } %>
+      </div>
+    </form>
+    <% } %>
+  </div>
+</aside>
+<% } %>

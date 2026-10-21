@@ -1,0 +1,36 @@
+<% if (products.length) { %>
+<div class="compare-scroll" tabindex="0" role="region" aria-label="Karşılaştırma tablosu (yatay kaydırılabilir)">
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th scope="col"><span class="visually-hidden">Özellik</span></th>
+        <% products.forEach((p) => { const img = p.images.find((i) => i.role === 'front') || p.images[0]; %>
+        <th scope="col">
+          <a href="<%= p.url %>" class="compare-product">
+            <img src="<%= imageSrc(img) %>" alt="" width="160" height="160" loading="lazy">
+            <span><%= p.title %></span>
+          </a>
+          <button type="button" class="btn btn-link btn-sm" data-remove-from="compare" data-handle="<%= p.handle %>">Listeden çıkar</button>
+        </th>
+        <% }) %>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><th scope="row">Fiyat</th><% products.forEach((p) => { %><td class="fw-semibold"><%= fmt.moneyObj(p.price) %></td><% }) %></tr>
+      <tr><th scope="row">Stok</th><% products.forEach((p) => { %><td><%= p.availableForSale ? 'Satışta' : 'Tükendi' %></td><% }) %></tr>
+      <tr><th scope="row">Ürün kodu</th><% products.forEach((p) => { %><td><%= p.sku || '—' %></td><% }) %></tr>
+      <% keys.forEach((k) => { %>
+      <tr><th scope="row"><%= k.label %></th><% products.forEach((p) => { const s = p.specs.find((x) => x.key === k.key); %><td><%= s ? s.value : '—' %></td><% }) %></tr>
+      <% }) %>
+      <tr><th scope="row"><span class="visually-hidden">İşlem</span></th><% products.forEach((p) => { %><td>
+        <% if (p.availableForSale && p.variantId) { %>
+        <form action="/sepet/ekle" method="post" data-cart-form>
+          <input type="hidden" name="merchandiseId" value="<%= p.variantId %>"><input type="hidden" name="quantity" value="1"><input type="hidden" name="returnTo" value="/karsilastir">
+          <button class="btn btn-buy btn-sm" type="submit">Sepete ekle</button>
+        </form>
+        <% } %>
+      </td><% }) %></tr>
+    </tbody>
+  </table>
+</div>
+<% } %>

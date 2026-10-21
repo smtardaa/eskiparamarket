@@ -1,0 +1,14 @@
+<%- include('../partials/layout-start') %>
+<div class="container-xl page-pad">
+  <%- include('../partials/breadcrumb') %>
+  <h1 class="page-title">Favorilerim</h1>
+  <p class="text-secondary">Favorileriniz yalnızca bu tarayıcıda saklanır. Fiyat ve stok bilgisi her açılışta mağazadan yeniden alınır.</p>
+  <div data-list-view="favorites" data-endpoint="/parcalar/kartlar" aria-live="polite">
+    <noscript><div class="notice notice-muted">Favoriler için JavaScript gereklidir.</div></noscript>
+    <p class="loading-text">Yükleniyor…</p>
+  </div>
+  <template id="favorites-empty">
+    <div class="empty-state"><h2 class="h5">Favori listeniz boş</h2><p>Ürün kartlarındaki kalp simgesiyle favori ekleyebilirsiniz.</p><a class="btn btn-primary-navy" href="/">Ürünlere göz at</a></div>
+  </template>
+</div>
+<%- include('../partials/layout-end') %>

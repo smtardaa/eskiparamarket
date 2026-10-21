@@ -1,0 +1,5 @@
+<% if (products.length) { %>
+<div class="product-grid">
+  <% products.forEach((p) => { %><%- include('../partials/product-card', { p }) %><% }) %>
+</div>
+<% } %>

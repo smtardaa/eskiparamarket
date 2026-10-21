@@ -1,0 +1,36 @@
+{
+ "meta": {
+  "source": "https://eskiparamarket.com",
+  "crawledAt": "2026-10-21T17:03:55.300Z",
+  "builtAt": "2026-10-21T17:31:31.390Z"
+ },
+ "categoryProblems": [],
+ "productIssues": [],
+ "ignoredAttributes": [
+  {
+   "url": "https://eskiparamarket.com/1-emisyon-1-lira-pik-p-119-yil-1927-kondisyon-10-7-5-1",
+   "attributes": [
+    {
+     "group": "Processor",
+     "name": "Saat Hızı",
+     "value": "100mhz"
+    }
+   ]
+  },
+  {
+   "url": "https://eskiparamarket.com/8-emisyon-5-yeni-turk-lirasi-pik-p-217-yil-2005-kondisyon-10-10",
+   "attributes": [
+    {
+     "group": "Memory",
+     "name": "test 1",
+     "value": "8gb"
+    },
+    {
+     "group": "Processor",
+     "name": "Çekirdek Sayısı",
+     "value": "1"
+    }
+   ]
+  }
+ ]
+}
